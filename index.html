@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Phong To — Công Cụ Tài Chính Bất Động Sản</title>
+  <meta name="description"
+    content="Tính toán tài chính bất động sản hoàn toàn bằng tiếng Việt. Tính trả góp, lịch trả nợ, khả năng mua nhà và nhiều công cụ hữu ích khác. Phong Realtor TX." />
+  <meta name="theme-color" content="#0f0f1a" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="header-logo">🏡</span>
+        <div>
+          <h1 class="header-title">Phong To</h1>
+          <p class="header-subtitle">Công cụ tài chính BĐS</p>
+        </div>
+      </div>
+      <a href="tel:+19036003535" class="header-phone" aria-label="Gọi Phong">
+        <span>📞</span>
+      </a>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" id="tabNav">
+      <div class="tab-scroll">
+        <button class="tab active" data-calc="mortgage">💰 Trả Góp</button>
+        <button class="tab" data-calc="amortization">📋 Lịch Nợ</button>
+        <button class="tab" data-calc="refinance">🔄 Tái Vốn</button>
+        <button class="tab" data-calc="affordability">🏠 Khả Năng</button>
+        <button class="tab" data-calc="loan-compare">⚖️ So Sánh</button>
+        <button class="tab" data-calc="rent-vs-buy">🔑 Thuê/Mua</button>
+        <button class="tab" data-calc="seller-net">💵 Người Bán</button>
+        <button class="tab" data-calc="buyer-costs">🧾 Người Mua</button>
+        <button class="tab" data-calc="investment">📈 Đầu Tư</button>
+        <button class="tab" data-calc="rent-estimate">🏘️ Tiền Thuê</button>
+      </div>
+    </nav>
+
+    <!-- Calculator Content -->
+    <main class="calc-content" id="calcContent">
+      <!-- Dynamic content loaded here -->
+    </main>
+
+    <!-- CTA Footer -->
+    <div class="cta-footer" id="ctaFooter">
+      <a href="tel:+19036003535" class="cta-btn cta-call">
+        <span>📞</span> Gọi Phong
+      </a>
+      <a href="sms:+19036003535" class="cta-btn cta-text">
+        <span>💬</span> Nhắn Tin
+      </a>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <span class="brand-footer">Phong Realtor TX · Sherman & DFW</span>
+    </nav>
+  </div>
+
+  <!-- Email Gate Modal -->
+  <div class="modal-overlay" id="emailModal">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-icon">📊</div>
+      <h2 class="modal-title">Xem Bảng Chi Tiết</h2>
+      <p class="modal-desc">Nhập email để nhận bảng phân tích chi tiết và các mẹo tài chính từ Phong Realtor.</p>
+      <form id="emailForm" class="modal-form">
+        <input type="text" id="emailName" placeholder="Tên của bạn" required class="modal-input" />
+        <input type="email" id="emailInput" placeholder="Email của bạn" required class="modal-input" />
+        <input type="tel" id="emailPhone" placeholder="Số điện thoại (không bắt buộc)" class="modal-input" />
+        <button type="submit" class="modal-submit">📊 Xem Ngay</button>
+      </form>
+      <p class="modal-privacy">🔒 Thông tin được bảo mật. Không spam.</p>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
