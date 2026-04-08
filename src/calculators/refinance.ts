@@ -1,24 +1,26 @@
 import { pmt } from '../utils/math';
 import { usd, pct } from '../utils/format';
 import { createDonut } from '../utils/charts';
+import { parseNum } from '../utils/parse';
+import { clearInputErrors, requirePositive, requireRange } from '../utils/validate';
 
 export function render(): string {
     return `
-    <h2 class="calc-title">🔄 Tái Cấp Vốn Rút Tiền</h2>
+    <h2 class="calc-title"><span class="vi-text">🔄 Tái Cấp Vốn</span><span class="en-text">🔄 Cash-Out Refinance</span></h2>
     <p class="calc-desc">Tính toán khi thay khoản vay cũ bằng khoản vay mới lớn hơn để rút tiền mặt.</p>
 
     <div class="card">
       <div class="card-title">🏠 Thông tin hiện tại</div>
       <div class="input-group">
-        <label class="input-label">Giá trị nhà hiện tại</label>
+        <label class="input-label"><span class="vi-text">Giá trị nhà hiện tại</span><span class="en-text">Current Home Value</span></label>
         <input type="text" id="refi-value" class="input-field" value="400,000" inputmode="numeric" />
       </div>
       <div class="input-group">
-        <label class="input-label">Số dư nợ hiện tại</label>
+        <label class="input-label"><span class="vi-text">Số dư nợ hiện tại</span><span class="en-text">Current Balance</span></label>
         <input type="text" id="refi-balance" class="input-field" value="250,000" inputmode="numeric" />
       </div>
       <div class="input-group">
-        <label class="input-label">Số tiền muốn rút</label>
+        <label class="input-label"><span class="vi-text">Số tiền muốn rút</span><span class="en-text">Cash-Out Amount</span></label>
         <input type="text" id="refi-cashout" class="input-field" value="50,000" inputmode="numeric" />
       </div>
     </div>
@@ -27,11 +29,11 @@ export function render(): string {
       <div class="card-title">📝 Khoản vay mới</div>
       <div class="input-row">
         <div class="input-group">
-          <label class="input-label">Lãi suất mới (%)</label>
+          <label class="input-label"><span class="vi-text">Lãi suất mới</span><span class="en-text">New Rate (%/yr)</span></label>
           <input type="text" id="refi-rate" class="input-field" value="6.5" inputmode="decimal" />
         </div>
         <div class="input-group">
-          <label class="input-label">Kỳ hạn mới</label>
+          <label class="input-label"><span class="vi-text">Kỳ hạn mới</span><span class="en-text">New Term</span></label>
           <select id="refi-term" class="input-field">
             <option value="30" selected>30 năm</option>
             <option value="20">20 năm</option>
@@ -39,7 +41,7 @@ export function render(): string {
           </select>
         </div>
       </div>
-      <button class="calc-btn" id="refi-calc-btn">📊 Tính Ngay</button>
+      <button class="calc-btn" id="refi-calc-btn">📊 <span class="vi-text">Tính Ngay</span><span class="en-text">Calculate</span></button>
     </div>
 
     <div id="refi-results" style="display:none">
@@ -54,12 +56,9 @@ export function render(): string {
         <div class="card-title">📋 Chi tiết</div>
         <div class="result-grid" id="refi-breakdown"></div>
       </div>
+      <button class="print-btn" onclick="window.print()">📥 <span class="vi-text">Lưu / In PDF</span><span class="en-text">Save / Print PDF</span></button>
     </div>
   `;
-}
-
-function parseNum(id: string): number {
-    return parseFloat((document.getElementById(id) as HTMLInputElement).value.replace(/[^0-9.-]/g, '')) || 0;
 }
 
 export function init() {
@@ -77,6 +76,9 @@ export function init() {
 }
 
 function calculate() {
+    clearInputErrors('refi-value', 'refi-rate');
+    if (!requirePositive('refi-value', 'Giá trị nhà')) return;
+    if (!requireRange('refi-rate', 'Lãi suất', 0.1, 30)) return;
     const homeValue = parseNum('refi-value');
     const currentBalance = parseNum('refi-balance');
     const cashOut = parseNum('refi-cashout');

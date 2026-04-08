@@ -1,16 +1,18 @@
 import { rentVsBuyAnalysis } from '../utils/math';
 import { usd } from '../utils/format';
 import { createLine } from '../utils/charts';
+import { parseNum } from '../utils/parse';
+import { clearInputErrors, requirePositive, requireRange } from '../utils/validate';
 
 export function render(): string {
     return `
-    <h2 class="calc-title">🔑 Thuê vs. Mua</h2>
+    <h2 class="calc-title"><span class="vi-text">🏡 Thuê hay Mua?</span><span class="en-text">🏡 Rent vs Buy</span></h2>
     <p class="calc-desc">So sánh chi phí thuê nhà và mua nhà trong dài hạn để ra quyết định đúng đắn.</p>
 
     <div class="card">
       <div class="card-title">🏠 Thông tin mua nhà</div>
       <div class="input-group">
-        <label class="input-label">Giá nhà</label>
+        <label class="input-label"><span class="vi-text">Giá nhà muốn mua</span><span class="en-text">Home Purchase Price</span></label>
         <input type="text" id="rvb-price" class="input-field" value="350,000" inputmode="numeric" />
       </div>
       <div class="input-group">
@@ -32,7 +34,7 @@ export function render(): string {
     <div class="card">
       <div class="card-title">🏘️ Thông tin thuê nhà</div>
       <div class="input-group">
-        <label class="input-label">Tiền thuê/tháng</label>
+        <label class="input-label"><span class="vi-text">Tiền thuê/tháng</span><span class="en-text">Monthly Rent</span></label>
         <input type="text" id="rvb-rent" class="input-field" value="1,800" inputmode="numeric" />
       </div>
       <div class="input-row">
@@ -46,13 +48,13 @@ export function render(): string {
         </div>
       </div>
       <div class="input-group">
-        <label class="input-label">So sánh trong bao nhiêu năm</label>
+        <label class="input-label"><span class="vi-text">Số năm so sánh</span><span class="en-text">Years to Compare</span></label>
         <div class="slider-container">
           <input type="range" id="rvb-years-slider" class="slider" min="1" max="30" value="10" />
           <span class="slider-value" id="rvb-years-value">10 năm</span>
         </div>
       </div>
-      <button class="calc-btn" id="rvb-calc-btn">📊 So Sánh</button>
+      <button class="calc-btn" id="rvb-calc-btn"><span class="vi-text">📊 So Sánh</span><span class="en-text">📊 Compare</span></button>
     </div>
 
     <div id="rvb-results" style="display:none">
@@ -67,13 +69,11 @@ export function render(): string {
         <div class="card-title">📋 Chi tiết</div>
         <div class="result-grid" id="rvb-breakdown"></div>
       </div>
+      <button class="calc-btn" onclick="window.print()" style="margin-top:16px"><span class="vi-text">🖨️ In</span><span class="en-text">🖨️ Print</span></button>
     </div>
   `;
 }
 
-function parseNum(id: string): number {
-    return parseFloat((document.getElementById(id) as HTMLInputElement).value.replace(/[^0-9.-]/g, '')) || 0;
-}
 
 export function init() {
     const slider = document.getElementById('rvb-years-slider') as HTMLInputElement;
@@ -93,6 +93,11 @@ export function init() {
 }
 
 function calculate() {
+    clearInputErrors('rvb-price', 'rvb-rent');
+    if (!requirePositive('rvb-price', 'Giá nhà')) return;
+    if (!requirePositive('rvb-rent', 'Tiền thuê')) return;
+    if (!requireRange('rvb-rate', 'Lãi suất', 0.1, 30)) return;
+
     const price = parseNum('rvb-price');
     const down = parseNum('rvb-down');
     const rate = parseNum('rvb-rate');
@@ -110,10 +115,10 @@ function calculate() {
     const verdict = document.getElementById('rvb-verdict')!;
     if (lastYear.buyCost < lastYear.rentCost) {
         const savings = lastYear.rentCost - lastYear.buyCost;
-        verdict.innerHTML = `<div class="result-big positive">🏠 Mua nhà có lợi hơn!</div><div class="result-big-label">Tiết kiệm ${usd(savings)} sau ${years} năm so với thuê</div>`;
+        verdict.innerHTML = `<div class="result-big positive"><span class="vi-text">🏠 Mua nhà có lợi hơn!</span><span class="en-text">🏠 Buying is Better!</span></div><div class="result-big-label">Tiết kiệm ${usd(savings)} sau ${years} năm so với thuê</div>`;
     } else {
         const savings = lastYear.buyCost - lastYear.rentCost;
-        verdict.innerHTML = `<div class="result-big" style="color:#fbbf24">🏘️ Thuê nhà có lợi hơn</div><div class="result-big-label">Tiết kiệm ${usd(savings)} sau ${years} năm so với mua</div>`;
+        verdict.innerHTML = `<div class="result-big" style="color:#fbbf24"><span class="vi-text">🏘️ Thuê nhà có lợi hơn</span><span class="en-text">🏘️ Renting is Better</span></div><div class="result-big-label">Tiết kiệm ${usd(savings)} sau ${years} năm so với mua</div>`;
     }
 
     // Chart

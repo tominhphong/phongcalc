@@ -1,16 +1,18 @@
 import { pmt } from '../utils/math';
 import { usd } from '../utils/format';
+import { parseNum } from '../utils/parse';
+import { clearInputErrors, requirePositive } from '../utils/validate';
 
 export function render(): string {
     return `
-    <h2 class="calc-title">⚖️ So Sánh Khoản Vay</h2>
+    <h2 class="calc-title"><span class="vi-text">⚖️ So Sánh Khoản Vay</span><span class="en-text">⚖️ Loan Comparison</span></h2>
     <p class="calc-desc">So sánh song song 2 lựa chọn vay để tìm phương án tốt nhất.</p>
 
     <div class="compare-grid">
       <div class="compare-col">
-        <div class="compare-col-title a">Phương án A</div>
+        <div class="compare-col-title a"><span class="vi-text">Phương án A</span><span class="en-text">Option A</span></div>
         <div class="input-group">
-          <label class="input-label">Giá nhà</label>
+          <label class="input-label"><span class="vi-text">Giá nhà</span><span class="en-text">Home Price</span></label>
           <input type="text" id="cmp-price-a" class="input-field" value="350,000" inputmode="numeric" />
         </div>
         <div class="input-group">
@@ -18,7 +20,7 @@ export function render(): string {
           <input type="text" id="cmp-down-a" class="input-field" value="70,000" inputmode="numeric" />
         </div>
         <div class="input-group">
-          <label class="input-label">Lãi suất</label>
+          <label class="input-label"><span class="vi-text">Lãi suất</span><span class="en-text">Interest Rate</span></label>
           <input type="text" id="cmp-rate-a" class="input-field" value="6.5" inputmode="decimal" />
         </div>
         <div class="input-group">
@@ -31,9 +33,9 @@ export function render(): string {
         </div>
       </div>
       <div class="compare-col">
-        <div class="compare-col-title b">Phương án B</div>
+        <div class="compare-col-title b"><span class="vi-text">Phương án B</span><span class="en-text">Option B</span></div>
         <div class="input-group">
-          <label class="input-label">Giá nhà</label>
+          <label class="input-label"><span class="vi-text">Giá nhà</span><span class="en-text">Home Price</span></label>
           <input type="text" id="cmp-price-b" class="input-field" value="350,000" inputmode="numeric" />
         </div>
         <div class="input-group">
@@ -41,7 +43,7 @@ export function render(): string {
           <input type="text" id="cmp-down-b" class="input-field" value="35,000" inputmode="numeric" />
         </div>
         <div class="input-group">
-          <label class="input-label">Lãi suất</label>
+          <label class="input-label"><span class="vi-text">Lãi suất</span><span class="en-text">Interest Rate</span></label>
           <input type="text" id="cmp-rate-b" class="input-field" value="7.0" inputmode="decimal" />
         </div>
         <div class="input-group">
@@ -54,7 +56,7 @@ export function render(): string {
         </div>
       </div>
     </div>
-    <button class="calc-btn" id="cmp-calc-btn" style="margin-top:16px">📊 So Sánh</button>
+    <button class="calc-btn" id="cmp-calc-btn" style="margin-top:16px"><span class="vi-text">📊 So Sánh</span><span class="en-text">📊 Compare</span></button>
 
     <div id="cmp-results" style="display:none">
       <div class="result-card" id="cmp-winner"></div>
@@ -62,13 +64,11 @@ export function render(): string {
         <div class="card-title">📋 So sánh chi tiết</div>
         <div class="result-grid" id="cmp-breakdown"></div>
       </div>
+      <button class="calc-btn" onclick="window.print()" style="margin-top:16px"><span class="vi-text">🖨️ In</span><span class="en-text">🖨️ Print</span></button>
     </div>
   `;
 }
 
-function parseNum(id: string): number {
-    return parseFloat((document.getElementById(id) as HTMLInputElement).value.replace(/[^0-9.-]/g, '')) || 0;
-}
 
 export function init() {
     document.getElementById('cmp-calc-btn')!.addEventListener('click', calculate);
@@ -85,6 +85,10 @@ export function init() {
 }
 
 function calculate() {
+    clearInputErrors('cmp-price-a', 'cmp-price-b');
+    if (!requirePositive('cmp-price-a', 'Giá nhà A')) return;
+    if (!requirePositive('cmp-price-b', 'Giá nhà B')) return;
+
     const priceA = parseNum('cmp-price-a'), downA = parseNum('cmp-down-a'), rateA = parseNum('cmp-rate-a'), termA = parseNum('cmp-term-a');
     const priceB = parseNum('cmp-price-b'), downB = parseNum('cmp-down-b'), rateB = parseNum('cmp-rate-b'), termB = parseNum('cmp-term-b');
 

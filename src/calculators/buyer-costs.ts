@@ -1,20 +1,22 @@
 import { buyerClosingCosts } from '../utils/math';
 import { usd, pct } from '../utils/format';
 import { createDonut } from '../utils/charts';
+import { parseNum } from '../utils/parse';
+import { clearInputErrors, requirePositive } from '../utils/validate';
 
 export function render(): string {
     return `
-    <h2 class="calc-title">🧾 Chi Phí Người Mua</h2>
+    <h2 class="calc-title"><span class="vi-text">🏷️ Chi Phí Người Mua</span><span class="en-text">🏷️ Buyer Closing Costs</span></h2>
     <p class="calc-desc">Tổng hợp tất cả chi phí người mua phải trả khi hoàn tất mua nhà.</p>
 
     <div class="card">
       <div class="card-title">🏠 Thông tin mua</div>
       <div class="input-group">
-        <label class="input-label">Giá mua</label>
+        <label class="input-label"><span class="vi-text">Giá mua</span><span class="en-text">Purchase Price</span></label>
         <input type="text" id="buy-price" class="input-field" value="350,000" inputmode="numeric" />
       </div>
       <div class="input-group">
-        <label class="input-label">Tiền trả trước (%)</label>
+        <label class="input-label"><span class="vi-text">Trả trước (%)</span><span class="en-text">Down Payment (%)</span></label>
         <div class="slider-container">
           <input type="range" id="buy-down-slider" class="slider" min="0" max="50" value="20" />
           <span class="slider-value" id="buy-down-value">20%</span>
@@ -22,21 +24,21 @@ export function render(): string {
       </div>
       <div class="input-row">
         <div class="input-group">
-          <label class="input-label">Thuế BĐS (%/năm)</label>
+          <label class="input-label"><span class="vi-text">Thuế BĐS/năm</span><span class="en-text">Property Tax/yr</span></label>
           <input type="text" id="buy-tax" class="input-field" value="2.2" inputmode="decimal" />
         </div>
         <div class="input-group">
-          <label class="input-label">Bảo hiểm/năm</label>
+          <label class="input-label"><span class="vi-text">Bảo hiểm/năm</span><span class="en-text">Insurance/yr</span></label>
           <input type="text" id="buy-ins" class="input-field" value="1,500" inputmode="numeric" />
         </div>
       </div>
-      <button class="calc-btn" id="buy-calc-btn">📊 Tính Ngay</button>
+      <button class="calc-btn" id="buy-calc-btn">📊 <span class="vi-text">Tính Ngay</span><span class="en-text">Calculate</span></button>
     </div>
 
     <div id="buy-results" style="display:none">
       <div class="result-card">
         <div class="result-big" id="buy-total"></div>
-        <div class="result-big-label">Tổng tiền mặt cần chuẩn bị</div>
+        <div class="result-big-label"><span class="vi-text">Tổng tiền cần chuẩn bị</span><span class="en-text">Total Cash to Close</span></div>
         <div class="chart-container">
           <canvas id="buy-chart"></canvas>
         </div>
@@ -45,12 +47,9 @@ export function render(): string {
         <div class="card-title">📋 Chi tiết chi phí</div>
         <div class="result-grid" id="buy-breakdown"></div>
       </div>
+      <button class="print-btn" onclick="window.print()">📥 <span class="vi-text">Lưu / In PDF</span><span class="en-text">Save / Print PDF</span></button>
     </div>
   `;
-}
-
-function parseNum(id: string): number {
-    return parseFloat((document.getElementById(id) as HTMLInputElement).value.replace(/[^0-9.-]/g, '')) || 0;
 }
 
 export function init() {
@@ -71,6 +70,8 @@ export function init() {
 }
 
 function calculate() {
+    clearInputErrors('buy-price');
+    if (!requirePositive('buy-price', 'Giá mua')) return;
     const price = parseNum('buy-price');
     const downPct = parseInt((document.getElementById('buy-down-slider') as HTMLInputElement).value);
     const taxRate = parseNum('buy-tax');

@@ -213,3 +213,25 @@ export function investmentCashflow(
 
   return { monthlyCashflow, annualReturn, expenses, income: effectiveRent };
 }
+
+/**
+ * Calculate monthly PMI (Private Mortgage Insurance).
+ * Required when LTV > 80% (down payment < 20%).
+ * Based on standard US PMI rates for 2024-2025.
+ *
+ * PMI rates by LTV (DFW market reference):
+ *   LTV > 95%: ~1.2%/year
+ *   LTV 90-95%: ~0.9%/year
+ *   LTV 80-90%: ~0.6%/year
+ *   LTV ≤ 80%: 0 (no PMI required)
+ */
+export function calculatePMI(loanAmount: number, homePrice: number): number {
+  if (homePrice <= 0) return 0;
+  const ltv = loanAmount / homePrice;
+  if (ltv <= 0.8) return 0;
+
+  // Annual PMI rate based on LTV
+  // Use >= for bracket boundaries (e.g. LTV exactly 90% → 90-95% bracket)
+  const annualPmiRate = ltv > 0.95 ? 0.012 : ltv >= 0.9 ? 0.009 : 0.006;
+  return (loanAmount * annualPmiRate) / 12;
+}

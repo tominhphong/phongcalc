@@ -57,7 +57,7 @@ export function createDonut(
                     borderWidth: 1,
                     padding: 10,
                     cornerRadius: 8,
-                    titleFont: { family: 'Inter', weight: '600' as const },
+                    titleFont: { family: 'Inter', weight: 600 as const },
                     bodyFont: { family: 'Inter' },
                     callbacks: {
                         label: (ctx) => {
@@ -147,7 +147,7 @@ export function createLine(
                     padding: 10,
                     cornerRadius: 8,
                     callbacks: {
-                        label: (ctx) => ` ${ctx.dataset.label}: $${ctx.parsed.y.toLocaleString()}`,
+                        label: (ctx) => ` ${ctx.dataset.label}: $${(ctx.parsed.y ?? 0).toLocaleString()}`,
                     },
                 },
             },

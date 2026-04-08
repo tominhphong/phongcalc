@@ -1,16 +1,18 @@
 import { investmentCashflow } from '../utils/math';
 import { usd, pct } from '../utils/format';
 import { createBar } from '../utils/charts';
+import { parseNum } from '../utils/parse';
+import { clearInputErrors, requirePositive, requireRange } from '../utils/validate';
 
 export function render(): string {
     return `
-    <h2 class="calc-title">📈 Dòng Tiền Đầu Tư</h2>
+    <h2 class="calc-title"><span class="vi-text">📈 Phân Tích Dòng Tiền</span><span class="en-text">📈 Investment Cashflow</span></h2>
     <p class="calc-desc">Tính lợi nhuận hàng tháng khi mua bất động sản để cho thuê.</p>
 
     <div class="card">
       <div class="card-title">🏠 Thông tin mua</div>
       <div class="input-group">
-        <label class="input-label">Giá nhà</label>
+        <label class="input-label"><span class="vi-text">Giá nhà</span><span class="en-text">Home Price</span></label>
         <input type="text" id="inv-price" class="input-field" value="300,000" inputmode="numeric" />
       </div>
       <div class="input-group">
@@ -38,7 +40,7 @@ export function render(): string {
     <div class="card">
       <div class="card-title">💰 Thu nhập & Chi phí</div>
       <div class="input-group">
-        <label class="input-label">Tiền thuê dự kiến/tháng</label>
+        <label class="input-label"><span class="vi-text">Tiền thuê/tháng</span><span class="en-text">Monthly Rent</span></label>
         <input type="text" id="inv-rent" class="input-field" value="2,200" inputmode="numeric" />
       </div>
       <div class="input-row">
@@ -63,7 +65,7 @@ export function render(): string {
       </div>
       <div class="input-row">
         <div class="input-group">
-          <label class="input-label">Trống nhà (%)</label>
+          <label class="input-label"><span class="vi-text">Tỷ lệ trống (%)</span><span class="en-text">Vacancy Rate (%)</span></label>
           <input type="text" id="inv-vacancy" class="input-field" value="5" inputmode="decimal" />
         </div>
         <div class="input-group">
@@ -71,13 +73,13 @@ export function render(): string {
           <input type="text" id="inv-mgmt" class="input-field" value="10" inputmode="decimal" />
         </div>
       </div>
-      <button class="calc-btn" id="inv-calc-btn">📊 Phân Tích</button>
+      <button class="calc-btn" id="inv-calc-btn"><span class="vi-text">📊 Phân Tích</span><span class="en-text">📊 Analyze</span></button>
     </div>
 
     <div id="inv-results" style="display:none">
       <div class="result-card">
         <div class="result-big" id="inv-cashflow"></div>
-        <div class="result-big-label">Dòng tiền hàng tháng</div>
+        <div class="result-big-label"><span class="vi-text">Dòng tiền hàng tháng</span><span class="en-text">Monthly Cashflow</span></div>
       </div>
       <div class="card">
         <div class="card-title">📊 Thu nhập vs Chi phí</div>
@@ -89,13 +91,11 @@ export function render(): string {
         <div class="card-title">📋 Chi tiết</div>
         <div class="result-grid" id="inv-breakdown"></div>
       </div>
+      <button class="calc-btn" onclick="window.print()" style="margin-top:16px"><span class="vi-text">🖨️ In</span><span class="en-text">🖨️ Print</span></button>
     </div>
   `;
 }
 
-function parseNum(id: string): number {
-    return parseFloat((document.getElementById(id) as HTMLInputElement).value.replace(/[^0-9.-]/g, '')) || 0;
-}
 
 export function init() {
     const slider = document.getElementById('inv-down-slider') as HTMLInputElement;
@@ -115,6 +115,11 @@ export function init() {
 }
 
 function calculate() {
+    clearInputErrors('inv-price', 'inv-rent');
+    if (!requirePositive('inv-price', 'Giá nhà')) return;
+    if (!requirePositive('inv-rent', 'Tiền thuê')) return;
+    if (!requireRange('inv-rate', 'Lãi suất', 0.1, 30)) return;
+
     const price = parseNum('inv-price');
     const downPct = parseInt((document.getElementById('inv-down-slider') as HTMLInputElement).value);
     const rate = parseNum('inv-rate');
