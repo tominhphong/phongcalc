@@ -11,6 +11,7 @@ import * as sellerNet from './calculators/seller-net';
 import * as buyerCosts from './calculators/buyer-costs';
 import * as investmentCashflow from './calculators/investment-cashflow';
 import * as rentEstimator from './calculators/rent-estimator';
+import { trackPixel, trackBookingReturn } from './utils/tracking';
 
 const EMAIL_KEY = 'phongto_email';
 const LEADS_KEY = 'phongto_leads';
@@ -71,6 +72,8 @@ function saveLead(name: string, email: string, phone: string) {
 
   // Sync to HubSpot via Diaflow webhook (fire-and-forget, CORS ✅, on_error: skip)
   syncToDiaflow(lead);
+
+  trackPixel('Lead', { content_name: activeCalc });
 }
 
 // Sync lead to HubSpot via existing Diaflow lead-capture flow
@@ -146,6 +149,8 @@ function toggleLang() {
 
 // Initialize app
 function initApp() {
+  trackBookingReturn();
+
   // Language toggle
   document.getElementById('lang-toggle')?.addEventListener('click', toggleLang);
 
