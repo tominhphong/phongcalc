@@ -12,6 +12,7 @@ import * as buyerCosts from './calculators/buyer-costs';
 import * as investmentCashflow from './calculators/investment-cashflow';
 import * as rentEstimator from './calculators/rent-estimator';
 import { trackPixel, trackBookingReturn } from './utils/tracking';
+import { bookingCtaHtml, initBookingCta } from './booking-cta';
 
 const EMAIL_KEY = 'phongto_email';
 const LEADS_KEY = 'phongto_leads';
@@ -121,8 +122,9 @@ function switchCalc(calcId: string) {
   const calc = calculators[calcId];
 
   if (calc) {
-    content.innerHTML = calc.render();
+    content.innerHTML = calc.render() + bookingCtaHtml();
     calc.init();
+    initBookingCta();
   }
 
   // Update active tab
@@ -185,6 +187,14 @@ function initApp() {
 
   document.getElementById('emailModal')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) hideEmailGate();
+  });
+
+  // Call and text links are real conversions for a realtor, so they report too.
+  document.querySelectorAll('a[href^="tel:"]').forEach(el => {
+    el.addEventListener('click', () => trackPixel('Contact', { content_name: 'phone-call' }));
+  });
+  document.querySelectorAll('a[href^="sms:"]').forEach(el => {
+    el.addEventListener('click', () => trackPixel('Contact', { content_name: 'sms' }));
   });
 
   // Load default calculator

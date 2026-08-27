@@ -1091,3 +1091,54 @@ body.lang-en .en-text { display: inline; }
   background: var(--bg-hover, #f1f5f9);
   color: var(--text, #1e293b);
 }
+
+/* ========== Booking CTA ========== */
+.booking-cta {
+  margin-top: 20px;
+  padding: 20px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  text-align: center;
+}
+
+.booking-cta-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.booking-cta-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.booking-cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 20px var(--primary-glow);
+  transition: var(--transition);
+}
+
+.booking-cta-btn:active {
+  transform: scale(0.98);
+}
+
+.booking-cta-note {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
